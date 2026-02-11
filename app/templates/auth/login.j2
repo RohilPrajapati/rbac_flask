@@ -1,0 +1,66 @@
+{% extends "base.j2" %}
+{% block title %} Login {% endblock %}
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 py-10">
+    <div class="bg-white shadow-lg rounded-2xl w-full max-w-md p-8">
+
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">
+            Login
+        </h2>
+
+        <form method="POST" class="space-y-5" id="loginForm">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Email</label>
+                <input type="email" name="email" id="email"
+                    class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_email"></span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Password</label>
+                <input type="password" name="password" id="password"
+                    class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_password"></span>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-800 transition duration-200">
+                Login
+            </button>
+
+        </form>
+
+        <p class="mt-4 text-center text-gray-600 text-sm">
+            Don't have an account?
+            <a href="{{ url_for('auth.register') }}" class="text-gray-800 font-medium hover:underline">
+                Register
+            </a>
+        </p>
+
+    </div>
+</div>
+<!-- validated  client before submit to the server -->
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearErrors();
+
+        let valid = true;
+
+        const fields = [
+            { field: document.getElementById('email'), rules: { required: true, type: 'email' } },
+            { field: document.getElementById('password'), rules: { required: true, minLength: 8, maxLength: 50 } },
+        ];
+
+        fields.forEach(item => {
+            if (!validateField(item.field, item.rules)) valid = false;
+        });
+
+        if (valid) {
+            this.submit();
+        }
+    });
+
+</script>
+{% endblock%}s

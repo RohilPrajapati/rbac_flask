@@ -11,6 +11,5 @@ wheels/
 
 .env
 
-app/routes
+
 app/services
-app/templates
