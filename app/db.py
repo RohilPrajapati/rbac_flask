@@ -42,17 +42,17 @@ def init_db():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
-        first_name VARCHAR(255),
-        last_name VARCHAR(255),
-        email VARCHAR(255),
-        password VARCHAR(255),
-        phone VARCHAR(20),
-        dob DATE,
-        gender gender_enum,
-        address VARCHAR(255),
+        first_name VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        dob DATE NOT NULL,
+        gender gender_enum NOT NULL,
+        address VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW(),
-        role user_role
+        role user_role NOT NULL
     );
     """)
 
@@ -60,11 +60,11 @@ def init_db():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS artist (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255),
-        dob DATE,
-        gender gender_enum,
-        address VARCHAR(255),
-        first_release_year SMALLINT,
+        name VARCHAR(255) NOT NULL,
+        dob DATE NOT NULL,
+        gender gender_enum NOT NULL,
+        address VARCHAR(255) NOT NULL,
+        first_release_year SMALLINT NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
     );
@@ -74,12 +74,16 @@ def init_db():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS music (
         id SERIAL PRIMARY KEY,
-        artist_id int,
-        title VARCHAR(255),
-        album_name VARCHAR(255),
-        genre genre_enum,
+        artist_id int NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        album_name VARCHAR(255) NOT NULL,
+        genre genre_enum NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
+        updated_at TIMESTAMP DEFAULT NOW(),
+        CONSTRAINT fk_artist
+            FOREIGN KEY (artist_id) 
+            REFERENCES artist(id)
+            ON DELETE CASCADE
     );
     """)
 
