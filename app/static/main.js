@@ -1,4 +1,11 @@
 // validation utils
+setTimeout(() => {
+    const flashContainer = document.getElementById('flash-container');
+    if (flashContainer) {
+        flashContainer.classList.add('opacity-0', 'transition', 'duration-500');
+        setTimeout(() => flashContainer.remove(), 500);
+    }
+}, 4000);
 
 function showError(fieldId, message) {
     const errorEl = document.getElementById('error_' + fieldId);

@@ -16,6 +16,9 @@ def create_app():
         return redirect(url_for("auth.login"))
 
     from app.routes import auth
+    from app.routes.dashboard import register_dashboard_routes
+
+    register_dashboard_routes(app)
 
     app.register_blueprint(auth.bp)
 

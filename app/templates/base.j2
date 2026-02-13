@@ -15,6 +15,24 @@
 
 <body>
     {% include "./components/top_nav.j2" %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-container" class="fixed bottom-5 right-5 space-y-2 z-50">
+        {% for category, message in messages %}
+        <div class="
+          flash-message
+          px-4 py-2 rounded shadow
+          text-white font-semibold
+          {% if category == 'success' %} bg-green-500 {% endif %}
+          {% if category == 'error' %} bg-red-500 {% endif %}
+          {% if category == 'info' %} bg-blue-500 {% endif %}
+        ">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <div>
         {% block body %}{% endblock %}
     </div>

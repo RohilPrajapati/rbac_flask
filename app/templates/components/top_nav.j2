@@ -7,11 +7,14 @@
                 </a>
             </div>
             <div class="flex items-center space-x-6">
-                {% if not session['id'] %}
-                <a class="hover:text-white-400 transition" href="{{ url_for('auth.login') }}">Login</a></li>
-                <a class="hover:text-white-400 transition" href="{{ url_for('auth.register') }}">Register</a></li>
+                {% if session.get('user_id') %}
+                <span class="text-gray-300">{{ session.get('full_name', 'User') }}</span>
+                <form action="{{ url_for('auth.logout') }}" method="POST" class="inline">
+                    <button type="submit" class="hover:text-gray-400 transition">Logout</button>
+                </form>
                 {% else %}
-
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Login</a>
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.register') }}">Register</a>
                 {% endif %}
             </div>
         </div>
