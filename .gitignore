@@ -10,7 +10,3 @@ wheels/
 .venv
 
 .env
-
-app/routes
-app/services
-app/templates

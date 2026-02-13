@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../static/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../static/main.js">
+    </script>
+    <title>{% block title %} {% endblock %}</title>
+</head>
+
+<body>
+    {% include "./components/top_nav.j2" %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-container" class="fixed bottom-5 right-5 space-y-2 z-50">
+        {% for category, message in messages %}
+        <div class="
+          flash-message
+          px-4 py-2 rounded shadow
+          text-white font-semibold
+          {% if category == 'success' %} bg-green-500 {% endif %}
+          {% if category == 'error' %} bg-red-500 {% endif %}
+          {% if category == 'info' %} bg-blue-500 {% endif %}
+        ">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div>
+        {% block body %}{% endblock %}
+    </div>
+</body>
+
+</html>

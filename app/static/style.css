@@ -1,0 +1,17 @@
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeOut 4s forwards;
+}

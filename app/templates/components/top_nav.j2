@@ -1,0 +1,23 @@
+<nav class="bg-gray-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16 items-center">
+            <div class="text-xl font-semibold tracking-wide">
+                <a href="{{ url_for('auth.login') }}" class="hover:text-gray-400 transition">
+                    Music Admin Panel
+                </a>
+            </div>
+            <div class="flex items-center space-x-6">
+                {% if session.get('user_id') %}
+                <span class="text-gray-300">{{ session.get('full_name', 'User') }}</span>
+                <form action="{{ url_for('auth.logout') }}" method="POST" class="inline">
+                    <button type="submit" class="hover:text-gray-400 transition">Logout</button>
+                </form>
+                {% else %}
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Login</a>
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.register') }}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+</nav>
