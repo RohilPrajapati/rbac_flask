@@ -24,6 +24,26 @@ def validate_registration(request_data: dict):
     return True
 
 
+def validate_user_update(request_data: dict):
+    rules = {
+        "first_name": ["required", "min_length:3", "max_length:50"],
+        "last_name": ["required", "min_length:3", "max_length:50"],
+        "email": ["required", "email", "max_length:100"],
+        "phone": ["required", "numeric", "min_length:10", "max_length:15"],
+        "dob": ["required", "date"],
+        "gender": ["required"],
+        "address": ["required", "min_length: 3", "max_length: 255"],
+        "role": ["required"],
+    }
+
+    validator = Validator(request_data, rules)
+
+    if not validator.validate():
+        raise ValidationError(validator.errors)
+
+    return True
+
+
 def validate_login(request_data: dict):
     rules = {
         "email": ["required", "email"],

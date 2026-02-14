@@ -1,15 +1,17 @@
 {% extends "base.j2" %}
-{% block title %} Register {% endblock %}
+{% block title %} User List {% endblock %}
+
 {% block body %}
 <div class="min-h-screen flex items-center justify-center  py-10">
     <div class="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8">
 
         <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">
-            Create Account
+            Update User
         </h2>
 
-        <form action="{{ url_for('auth.register' )}}" method="POST" class="space-y-5" id="registrationForm">
-            <input type="hidden" name="next" value="{{next}}">
+        <form action="{{ url_for('user.update_user_view', user_id=user_id)}}" method="POST" class="space-y-5"
+            id="userUpdateForm">
+            <input type="hidden" name="id" value="{{ (form | default({})).id | default('')}}">
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-600">First Name</label>
@@ -33,21 +35,6 @@
                 <input type="email" name="email" id="email" value="{{ (form | default({})).email | default('') }}"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
                 <span class="text-red-500 text-sm hidden" id="error_email"></span>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-600">Password</label>
-                <input type="password" name="password" id="password"
-                    value="{{ (form | default({})).password | default('') }}"
-                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
-                <span class="text-red-500 text-sm hidden" id="error_password"></span>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-600">Confirm Password</label>
-                <input type="password" name="c_password" id="c_password"
-                    value="{{ (form | default({})).c_password | default('') }}"
-                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
-                <span class="text-red-500 text-sm hidden" id="error_c_password"></span>
             </div>
 
             <div>
@@ -104,14 +91,14 @@
 
             <button type="submit"
                 class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition duration-200">
-                Register
+                Update
             </button>
 
         </form>
     </div>
 </div>
 <script>
-    document.getElementById('registrationForm').addEventListener('submit', function (e) {
+    document.getElementById('userUpdateForm').addEventListener('submit', function (e) {
         e.preventDefault();
         clearErrors();
 
@@ -121,8 +108,6 @@
             { field: document.getElementById('first_name'), rules: { required: true, minLength: 3, maxLength: 255 } },
             { field: document.getElementById('last_name'), rules: { required: true, minLength: 3, maxLength: 255 } },
             { field: document.getElementById('email'), rules: { required: true, type: 'email', maxLength: 255 } },
-            { field: document.getElementById('password'), rules: { required: true, minLength: 8, maxLength: 50 } },
-            { field: document.getElementById('c_password'), rules: { required: true, minLength: 8, maxLength: 50 } },
             { field: document.getElementById('phone'), rules: { required: true, minLength: 10, maxLength: 15 } },
             { field: document.getElementById('dob'), rules: { required: true, type: 'date', minDate: '1900-01-01', maxDate: '2023-12-31' } },
             { field: document.getElementById('gender'), rules: { required: true } },
@@ -133,13 +118,6 @@
         fields.forEach(item => {
             if (!validateField(item.field, item.rules)) valid = false;
         });
-
-        const password = document.getElementById('password').value.trim();
-        const c_password = document.getElementById('c_password').value.trim();
-        if (password && c_password && password !== c_password) {
-            showError('c_password', 'Passwords do not match');
-            valid = false;
-        }
 
         if (valid) {
             this.submit();
@@ -157,4 +135,4 @@
     }
 
 </script>
-{% endblock%}s
+{% endblock %}

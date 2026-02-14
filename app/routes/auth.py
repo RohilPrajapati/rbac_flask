@@ -11,19 +11,33 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 @bp.route("/register", methods=("GET", "POST"))
 def register():
     if request.method == "POST":
+        next_endpoint = request.form.get("next")
+        print(f"next_endpoint: {next_endpoint}")
         try:
             validate_registration(request.form)
             register_user(request.form)
-            flash("Sign up completed", "success")
-            return redirect(url_for("auth.login"))
+
+            if next_endpoint:
+                try:
+                    flash("User added successfully", "success")
+                    return redirect(next_endpoint)
+                except Exception as e:
+                    print(f"error: {e}")
+                    flash("Sign up completed", "success")
+                    return redirect(url_for("auth.login"))
+
         except ValidationError as e:
-            flash("Failed to sign up", "error")
+            message = "Fail to create user" if next_endpoint else "Failed to sign up"
+            flash(message, "error")
+
             return render_template(
-                "auth/register.j2", errors=e.errors, form=request.form
+                "auth/register.j2",
+                next=next_endpoint,
+                errors=e.errors,
+                form=request.form,
             )
-    if session.get("user_id"):
-        return redirect(url_for("dashboard"))
-    return render_template("auth/register.j2")
+    next_url = request.args.get("next", "")
+    return render_template("auth/register.j2", next=next_url)
 
 
 @bp.route("/login", methods=("GET", "POST"))
@@ -43,6 +57,14 @@ def login():
             session["role"] = user["role"]
 
             flash(f"Welcome, {user['first_name']}!", "success")
+
+            next_endpoint = request.args.get("next")
+            if next_endpoint:
+                try:
+                    return redirect(url_for(next_endpoint))
+                except:
+                    return redirect(url_for("dashboard"))
+
             return redirect(url_for("dashboard"))
 
         except ValidationError as e:

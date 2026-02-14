@@ -8,6 +8,10 @@
             </div>
             <div class="flex items-center space-x-6">
                 {% if session.get('user_id') %}
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Dashboard</a>
+                <a class="hover:text-gray-400 transition" href="{{ url_for('user.list_user_view') }}">User</a>
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Artist</a>
+                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Music</a>
                 <span class="text-gray-300">{{ session.get('full_name', 'User') }}</span>
                 <form action="{{ url_for('auth.logout') }}" method="POST" class="inline">
                     <button type="submit" class="hover:text-gray-400 transition">Logout</button>
