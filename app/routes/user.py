@@ -9,6 +9,7 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 
 
 @bp.route("", methods=("GET",))
+@role_required("super_admin")
 def list_user_view():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 10, type=int)

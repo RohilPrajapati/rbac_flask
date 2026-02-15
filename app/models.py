@@ -2,6 +2,7 @@ from app.db import get_connection
 from werkzeug.security import generate_password_hash
 from psycopg2.extras import RealDictCursor
 from app.utils.exceptions import ValidationError
+from datetime import datetime
 
 
 def register_user(data: dict):
@@ -107,7 +108,7 @@ def update_user(data: dict):
     if cursor.fetchone():
         raise ValidationError({"email": "Email already exists."})
 
-    statement = """UPDATE users set first_name=%s, last_name = %s, email= %s, phone= %s, dob = %s, gender = %s, address = %s, role = %s where id = %s"""
+    statement = """UPDATE users set first_name=%s, last_name = %s, email= %s, phone= %s, dob = %s, gender = %s, address = %s, role = %s, updated_at=%s where id = %s"""
     try:
         cursor.execute(
             statement,
@@ -120,6 +121,7 @@ def update_user(data: dict):
                 data["gender"],
                 data["address"],
                 data["role"],
+                datetime.now(),
                 data["id"],
             ),
         )
