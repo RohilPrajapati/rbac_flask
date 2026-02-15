@@ -1,6 +1,21 @@
 # Simple RBAC CRUD App using Flask with session based authentication
 
-### setup process
+## TODO (Remaining Works)
+
+- check form validation both client and server side
+- manage permission for music and artist
+- create artist record when artist role user is created
+    - allow artist to access, edit and delete music
+- import from CSV
+- design simple dashboard
+
+
+### Latest development branch:
+```
+feat/artist_crud
+```
+
+### Setup process
 
 - sync dependency
 ```bash
