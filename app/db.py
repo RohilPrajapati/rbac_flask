@@ -64,9 +64,16 @@ def init_db():
         dob DATE NOT NULL,
         gender gender_enum NOT NULL,
         address VARCHAR(255) NOT NULL,
-        first_release_year SMALLINT NOT NULL,
+        first_release_year INT NULL,
+        no_of_albums INT DEFAULT 0,
         created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
+        updated_at TIMESTAMP DEFAULT NOW(),
+        
+        user_id INT NULL,
+        CONSTRAINT fk_artist_user
+            FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE SET NULL
     );
     """)
 

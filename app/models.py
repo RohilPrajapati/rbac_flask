@@ -156,3 +156,252 @@ def delete_user(user_id):
         raise e
     finally:
         cursor.close()
+
+
+# artist section
+def fetch_list_artist(page: int = 1, page_size: int = 10):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        offset = (page - 1) * page_size
+
+        cursor.execute("SELECT COUNT(*) as total FROM artist")
+        total = cursor.fetchone()["total"]
+
+        cursor.execute(
+            """
+            SELECT id, name, dob, gender, address, first_release_year, 
+                   created_at, updated_at 
+            FROM artist 
+            ORDER BY created_at DESC
+            LIMIT %s OFFSET %s
+            """,
+            (page_size, offset),
+        )
+        artists = cursor.fetchall()
+
+        return {
+            "artists": artists,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total + page_size - 1) // page_size,
+        }
+    finally:
+        cursor.close()
+
+
+def create_artist(data: dict):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    statement = """INSERT INTO artist (name, dob, gender, address, first_release_year, no_of_albums)
+        VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;"""
+    try:
+        cursor.execute(
+            statement,
+            (
+                data["name"],
+                data["dob"],
+                data["gender"],
+                data["address"],
+                data["first_release_year"],
+                data["no_of_albums"],
+            ),
+        )
+        user_id = cursor.fetchone()["id"]
+        conn.commit()
+        return user_id
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_artist_by_id(id: int):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute(
+        "SELECT id, name, dob, gender, address, created_at, updated_at, first_release_year, no_of_albums  FROM artist WHERE id = %s",
+        (id,),
+    )
+    result = cursor.fetchone()
+    return result
+
+
+def update_artist(data: dict):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    statement = """UPDATE artist set name=%s, dob = %s, gender = %s, address = %s, first_release_year = %s, no_of_albums=%s , updated_at=%s where id = %s"""
+    try:
+        cursor.execute(
+            statement,
+            (
+                data["name"],
+                data["dob"],
+                data["gender"],
+                data["address"],
+                data["first_release_year"],
+                data["no_of_albums"],
+                datetime.now(),
+                data["id"],
+            ),
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def delete_artist(artist_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT id FROM artist WHERE id = %s", (artist_id,))
+        if not cursor.fetchone():
+            raise ValueError("Artist not found")
+
+        cursor.execute("DELETE FROM artist WHERE id = %s", (artist_id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            raise ValueError("No artist was deleted")
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cursor.close()
+
+# music section
+def fetch_list_music(artist_id: int, page: int = 1, page_size: int = 10):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        offset = (page - 1) * page_size
+
+        cursor.execute("SELECT COUNT(*) as total FROM artist")
+        total = cursor.fetchone()["total"]
+
+        cursor.execute(
+            """
+            SELECT id, artist_id, title, album_name, genre, 
+                   created_at, updated_at 
+            FROM music WHERE artist_id = %s
+            ORDER BY created_at DESC
+            LIMIT %s OFFSET %s
+            """,
+            (artist_id, page_size, offset),
+        )
+        musics = cursor.fetchall()
+
+        return {
+            "musics": musics,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total + page_size - 1) // page_size,
+        }
+    finally:
+        cursor.close()
+
+
+def get_music_by_id(id: int):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute(
+        "SELECT id, artist_id, title, album_name, genre, created_at, updated_at FROM music WHERE id = %s",
+        (id,),
+    )
+    result = cursor.fetchone()
+    return result
+
+
+def create_music(data: dict):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    statement = """INSERT INTO music (artist_id, title, album_name, genre)
+        VALUES (%s, %s, %s, %s) RETURNING id;"""
+    try:
+        cursor.execute(
+            statement,
+            (
+                data["artist_id"],
+                data["title"],
+                data["album_name"],
+                data["genre"],
+            ),
+        )
+        record_id = cursor.fetchone()["id"]
+        conn.commit()
+        return record_id
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_music(data: dict):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    statement = """UPDATE music set artist_id=%s, title = %s, album_name = %s, genre = %s, updated_at=%s where id = %s"""
+    try:
+        cursor.execute(
+            statement,
+            (
+                data["artist_id"],
+                data["title"],
+                data["album_name"],
+                data["genre"],
+                datetime.now(),
+                data["id"],
+            ),
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def delete_music(music_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT id FROM music WHERE id = %s", (music_id,))
+        if not cursor.fetchone():
+            raise ValueError("Music not found")
+
+        cursor.execute("DELETE FROM music WHERE id = %s", (music_id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            raise ValueError("No Music was deleted")
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cursor.close()

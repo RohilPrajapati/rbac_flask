@@ -39,6 +39,25 @@ function validateField(field, rules) {
         return false;
     }
 
+    if (rules.type === 'year') {
+        console.log(value)
+        const yearPattern = /^\d{4}$/;
+
+        if (!yearPattern.test(value)) {
+            showError(id, 'Year must be 4 digits (YYYY)');
+            return false;
+        }
+
+        const year = parseInt(value);
+        const minYear = rules.minYear || 1900;
+        const maxYear = rules.maxYear || new Date().getFullYear();
+        console.log(year < minYear || year > maxYear)
+        if (year < minYear || year > maxYear) {
+            showError(id, `Year must be between ${minYear} and ${maxYear}`);
+            return false;
+        }
+    }
+
     if (rules.type === 'email') {
         const emailPattern = /^[^@]+@[^@]+\.[^@]+$/;
         if (!emailPattern.test(value)) {
@@ -69,6 +88,28 @@ function validateField(field, rules) {
                 showError(id, `Date cannot be later than ${rules.maxDate}`);
                 return false;
             }
+        }
+    }
+    if (rules.type === 'number') {
+
+        const numberValue = Number(value);
+
+        // Check if valid number
+        if (isNaN(numberValue)) {
+            showError(id, 'Invalid number');
+            return false;
+        }
+
+        // Check min value
+        if (rules.min !== undefined && numberValue < rules.min) {
+            showError(id, `Value must be at least ${rules.min}`);
+            return false;
+        }
+
+        // Check max value
+        if (rules.max !== undefined && numberValue > rules.max) {
+            showError(id, `Value must not exceed ${rules.max}`);
+            return false;
         }
     }
 

@@ -17,11 +17,15 @@ def create_app():
 
     from app.routes import auth
     from app.routes import user
+    from app.routes import artist
+    from app.routes import music
     from app.routes.dashboard import register_dashboard_routes
 
     register_dashboard_routes(app)
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(user.bp)
+    app.register_blueprint(artist.bp)
+    app.register_blueprint(music.bp)
 
     return app
