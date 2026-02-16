@@ -284,6 +284,7 @@ def delete_artist(artist_id):
     finally:
         cursor.close()
 
+
 # music section
 def fetch_list_music(artist_id: int, page: int = 1, page_size: int = 10):
     conn = get_connection()
@@ -292,7 +293,9 @@ def fetch_list_music(artist_id: int, page: int = 1, page_size: int = 10):
     try:
         offset = (page - 1) * page_size
 
-        cursor.execute("SELECT COUNT(*) as total FROM artist")
+        cursor.execute(
+            "SELECT COUNT(*) as total FROM music where artist_id=%s", (artist_id,)
+        )
         total = cursor.fetchone()["total"]
 
         cursor.execute(

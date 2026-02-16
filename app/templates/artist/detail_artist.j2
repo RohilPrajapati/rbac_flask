@@ -162,7 +162,7 @@
         <div class="flex justify-between items-center mt-6">
 
             {% if music.page > 1 %}
-            <a href="{{ url_for('artist.detail_artist_view', page=music.page-1, page_size=music.page_size) }}"
+            <a href="{{ url_for('artist.detail_artist_view',artist_id=artist.id, page=music.page-1, page_size=music.page_size) }}"
                 class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
                 Previous
             </a>
@@ -175,7 +175,7 @@
             </span>
 
             {% if music.page < music.total_pages %} <a
-                href="{{ url_for('artist.detail_artist_view', page=music.page+1, page_size=music.page_size) }}"
+                href="{{ url_for('artist.detail_artist_view', artist_id=artist.id,page=music.page+1, page_size=music.page_size) }}"
                 class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
                 Next
                 </a>

@@ -54,8 +54,11 @@ def create_artist_view():
 @bp.route("/<int:artist_id>", methods=("GET",))
 @role_required("super_admin", "artist_manager")
 def detail_artist_view(artist_id: int):
+    page = request.args.get("page", 1, type=int)
+    page_size = request.args.get("page_size", 10, type=int)
+
     artist = get_artist_by_id(artist_id)
-    music = fetch_list_music(artist_id)
+    music = fetch_list_music(artist_id, page, page_size)
     if artist:
         return render_template(
             "artist/detail_artist.j2",
