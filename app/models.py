@@ -1,6 +1,6 @@
 from app.db import get_connection
 from werkzeug.security import generate_password_hash
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor, execute_values
 from app.utils.exceptions import ValidationError
 from datetime import datetime
 
@@ -192,6 +192,23 @@ def fetch_list_artist(page: int = 1, page_size: int = 10):
         cursor.close()
 
 
+def get_all_artists():
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        cursor.execute("""
+            SELECT name, dob, gender, address,
+                   first_release_year, no_of_albums
+            FROM artist
+            ORDER BY name;
+        """)
+        return cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def create_artist(data: dict):
     conn = get_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -213,6 +230,44 @@ def create_artist(data: dict):
         user_id = cursor.fetchone()["id"]
         conn.commit()
         return user_id
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def create_artists_bulk(data_list: list[dict]):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    statement = """
+        INSERT INTO artist 
+        (name, dob, gender, address, first_release_year, no_of_albums)
+        VALUES %s
+        RETURNING id;
+    """
+
+    values = [
+        (
+            data["name"],
+            data["dob"],
+            data["gender"],
+            data["address"],
+            data["first_release_year"],
+            data["no_of_albums"],
+        )
+        for data in data_list
+    ]
+
+    try:
+        execute_values(cursor, statement, values)
+        ids = cursor.fetchall()
+        conn.commit()
+        return ids
+
     except Exception as e:
         conn.rollback()
         raise e
