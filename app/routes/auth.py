@@ -23,8 +23,8 @@ def register():
                     return redirect(next_endpoint)
                 except Exception as e:
                     print(f"error: {e}")
-                    flash("Sign up completed", "success")
-                    return redirect(url_for("auth.login"))
+            flash("Sign up completed", "success")
+            return redirect(url_for("auth.login"))
 
         except ValidationError as e:
             message = "Fail to create user" if next_endpoint else "Failed to sign up"
