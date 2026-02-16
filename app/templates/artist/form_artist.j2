@@ -1,0 +1,121 @@
+{% extends "base.j2" %}
+{% block title %} Artist List {% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center  py-10">
+    <div class="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8">
+
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">
+            {% if artist_id %}Update Artist {% else %}Create Artist {% endif %}
+        </h2>
+
+        <form action="
+        {% if artist_id %}
+            {{ url_for('artist.update_artist_view', artist_id=artist_id)}}
+        {% else %}
+            {{ url_for('artist.create_artist_view')}}
+        {% endif %}
+        " method="POST" class="space-y-5" id="artistUpdateForm">
+            <input type="hidden" name="id" value="{{ (form | default({})).id | default('')}}">
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Full Name</label>
+                <input type="text" name="name" id="name" value="{{ (form | default({})).name | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_name"></span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Date of Birth</label>
+                <input type="date" name="dob" id="dob" value="{{ (form | default({})).dob | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_dob"></span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Gender</label>
+                <select name="gender" id="gender" value="{{ (form | default({})).gender | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                    <option value="">Select Gender</option>
+                    <option value="m" {% if (form | default({})).gender=='m' %}selected{% endif %}>Male</option>
+                    <option value="f" {% if (form | default({})).gender=='f' %}selected{% endif %}>Female</option>
+                    <option value="o" {% if (form | default({})).gender=='o' %}selected{% endif %}>Other</option>
+                </select>
+                <span class="text-red-500 text-sm hidden" id="error_gender"></span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Address</label>
+                <input name="address" id="address" value="{{ (form | default({})).address | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
+                <span class="text-red-500 text-sm hidden" id="error_address"></span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">First Release Year</label>
+                <input type="text" name="first_release_year" id="first_release_year"
+                    value="{{ (form | default({})).first_release_year | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_first_release_year"></span>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Number of Albums</label>
+                <input type="number" name="no_of_albums" id="no_of_albums"
+                    value="{{ (form | default({})).no_of_albums | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_no_of_albums"></span>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition duration-200">
+                {% if artist_id %}Update {% else %}Create {% endif %}
+            </button>
+
+        </form>
+    </div>
+</div>
+<script>
+    document.getElementById('artistUpdateForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearErrors();
+
+        let valid = true;
+
+        const fields = [
+            { field: document.getElementById('name'), rules: { required: true, minLength: 3, maxLength: 255 } },
+            { field: document.getElementById('dob'), rules: { required: true, type: 'date', minDate: '1900-01-01', maxDate: '2023-12-31' } },
+            { field: document.getElementById('gender'), rules: { required: true } },
+            { field: document.getElementById('address'), rules: { required: true, minLength: 3, maxLength: 255 } },
+            {
+                field: document.getElementById('first_release_year'),
+                rules: {
+                    required: true,
+                    type: 'year',
+                    maxYear: new Date().getFullYear()
+                }
+            },
+
+            { field: document.getElementById('no_of_albums'), rules: { required: true, type: "number", min: 0 } },
+
+        ];
+
+        fields.forEach(item => {
+            if (!validateField(item.field, item.rules)) valid = false;
+        });
+
+        if (valid) {
+            this.submit();
+        }
+
+    });
+
+    const serverErrors = {{ errors | default ({}) | tojson }};
+    for (const field in serverErrors) {
+        const span = document.getElementById(`error_${field}`);
+        if (span) {
+            span.textContent = serverErrors[field];
+            span.classList.remove('hidden');
+        }
+    }
+
+</script>
+{% endblock %}

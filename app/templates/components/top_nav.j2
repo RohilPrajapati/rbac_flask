@@ -13,7 +13,7 @@
                 <a class="hover:text-gray-400 transition" href="{{ url_for('user.list_user_view') }}">User</a>
                 {% endif %}
                 {% if session.get("role") in ["super_admin", "artist_manager"] %}
-                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Artist</a>
+                <a class="hover:text-gray-400 transition" href="{{ url_for('artist.list_artist_view') }}">Artist</a>
                 {% endif %}
                 <span class="text-gray-300">{{ session.get('full_name', 'User') }}</span>
                 <form action="{{ url_for('auth.logout') }}" method="POST" class="inline">

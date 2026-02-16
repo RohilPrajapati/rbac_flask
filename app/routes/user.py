@@ -28,7 +28,9 @@ def list_user_view():
 @role_required("super_admin")
 def detail_user_view(user_id: int):
     user = get_user_by_id(user_id)
-    return render_template("user/detail_user.j2", user_id=user["id"], user=user)
+    if user:
+        return render_template("user/detail_user.j2", user_id=user["id"], user=user)
+    return render_template("404.j2")
 
 
 @bp.route("/<int:user_id>/update", methods=("GET", "POST"))

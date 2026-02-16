@@ -1,0 +1,95 @@
+{% extends "base.j2" %}
+{% block title %} Music Form {% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center  py-10">
+    <div class="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8">
+
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">
+            {% if music_id %}Update Music {% else %}Create Music {% endif %}
+        </h2>
+
+        <form action="
+        {% if music_id %}
+            {{ url_for('music.update_music_view', music_id=music_id)}}
+        {% else %}
+            {{ url_for('music.create_music_for_artist_view', artist_id=artist_id)}}
+        {% endif %}
+        " method="POST" class="space-y-5" id="artistUpdateForm">
+            <input type="hidden" name="id" value="{{ (form | default({})).id | default('')}}">
+            <input type="hidden" name="artist_id"
+                value="{{ form.artist_id if form is defined and form.id else artist_id | default('') }}">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Title</label>
+                <input type="text" name="title" id="title" value="{{ (form | default({})).title | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_title"></span>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Album Name</label>
+                <input type="text" name="album_name" id="album_name"
+                    value="{{ (form | default({})).album_name | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                <span class="text-red-500 text-sm hidden" id="error_album_name"></span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Genre</label>
+                <select name="genre" id="genre" value="{{ (form | default({})).genre | default('') }}"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 outline-none">
+                    <option value="">Select Genre</option>
+                    <option value="rnb" {% if (form | default({})).genre=='rnb' %}selected{% endif %}>RNB</option>
+                    <option value="country" {% if (form | default({})).genre=='country' %}selected{% endif %}>Country
+                    </option>
+                    <option value="classic" {% if (form | default({})).genre=='classic' %}selected{% endif %}>Classic
+                    </option>
+                    <option value="rock" {% if (form | default({})).genre=='rock' %}selected{% endif %}>Rock</option>
+                    <option value="jazz" {% if (form | default({})).genre=='jazz' %}selected{% endif %}>Jazz</option>
+                </select>
+                <span class="text-red-500 text-sm hidden" id="error_genre"></span>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition duration-200">
+                {% if music_id %}Update {% else %}Create {% endif %}
+            </button>
+
+        </form>
+    </div>
+</div>
+<script>
+    document.getElementById('artistUpdateForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearErrors();
+
+        let valid = true;
+
+        const fields = [
+            { field: document.getElementById('title'), rules: { required: true, minLength: 3, maxLength: 255 } },
+            { field: document.getElementById('album_name'), rules: { required: true, minLength: 3, maxLength: 255 } },
+            { field: document.getElementById('genre'), rules: { required: true, minLength: 3, maxLength: 255 } },
+
+        ];
+
+        fields.forEach(item => {
+            if (!validateField(item.field, item.rules)) valid = false;
+        });
+
+        if (valid) {
+            this.submit();
+        }
+
+    });
+
+    const serverErrors = {{ errors | default ({}) | tojson }};
+    for (const field in serverErrors) {
+        const span = document.getElementById(`error_${field}`);
+        if (span) {
+            span.textContent = serverErrors[field];
+            span.classList.remove('hidden');
+        }
+    }
+
+</script>
+{% endblock %}

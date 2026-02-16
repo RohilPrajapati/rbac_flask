@@ -1,0 +1,189 @@
+{% extends "base.j2" %}
+{% block title %} User Detail {% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-center py-10">
+    <div class="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
+
+        <h2 class="text-2xl font-bold text-center mb-8 text-gray-800">
+            Artist Details
+        </h2>
+
+        <div class="grid grid-cols-2 gap-6">
+
+            <div>
+                <p class="text-sm text-gray-500">Full Name</p>
+                <p class="text-lg font-medium text-gray-800">
+                    {{ artist.name }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-500">Date of Birth</p>
+                <p class="text-lg font-medium text-gray-800">
+                    {{ artist.dob }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-500">First Release Year</p>
+                <p class="text-lg font-medium text-gray-800">
+                    {{ artist.first_release_year }}
+                </p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Number of Albums</p>
+                <p class="text-lg font-medium text-gray-800">
+                    {{ artist.no_of_albums }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-500">Gender</p>
+                <p class="text-lg font-medium text-gray-800">
+                    {% if artist.gender == 'm' %}
+                    Male
+                    {% elif artist.gender == 'f' %}
+                    Female
+                    {% elif artist.gender == 'o' %}
+                    Other
+                    {% else %}
+                    -
+                    {% endif %}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-500">Address</p>
+                <p class="text-lg font-medium text-gray-800">
+                    {{ artist.address }}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="mt-10 flex justify-evenly">
+            <a href="{{ url_for('artist.list_artist_view') }}"
+                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                Back
+            </a>
+
+            <a href="{{ url_for('artist.update_artist_view', artist_id=artist.id) }}"
+                class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                Edit
+            </a>
+
+            <form method="POST" action="{{ url_for('artist.delete_artist_view', artist_id=artist.id) }}"
+                onsubmit="return confirm('Are you sure you want to delete this artist?');">
+
+                <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="flex items-center justify-center py-10">
+    <div class="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">
+                Music
+            </h2>
+            <div>
+                <span class="text-sm text-gray-500 px-5">
+                    Showing {{ music.musics|length }} of {{ music.total }} artists
+                </span>
+                <span>
+                    <a href="{{ url_for('music.create_music_for_artist_view', artist_id=artist.id, next=request.path) }}"
+                        class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-900 text-white rounded-lg transition">
+                        Add Music
+                    </a>
+                </span>
+            </div>
+
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-sm overflow-hidden">
+                <thead class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Title</th>
+                        <th class="px-6 py-3 text-left">Album Name</th>
+                        <th class="px-6 py-3 text-left">Genre</th>
+                        <th class="px-6 py-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-700">
+                    {% for music in music.musics %}
+
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 font-medium">
+                            {{ music.title }}
+                        </td>
+                        <td class="px-6 py-4 font-medium">
+                            {{ music.album_name }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ music.genre }}
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center space-x-3">
+
+                                <a href="{{ url_for('music.update_music_view', music_id=music.id) }}"
+                                    class="px-3 py-1 text-sm bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition">
+                                    Edit
+                                </a>
+
+                                <form method="POST" action="{{ url_for('music.delete_music_view', music_id=music.id) }}"
+                                    onsubmit="return confirm('Are you sure you want to delete this artist?');">
+
+                                    <button type="submit"
+                                        class="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
+                                        Delete
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-gray-500">
+                            No music found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-between items-center mt-6">
+
+            {% if music.page > 1 %}
+            <a href="{{ url_for('artist.detail_artist_view',artist_id=artist.id, page=music.page-1, page_size=music.page_size) }}"
+                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
+                Previous
+            </a>
+            {% else %}
+            <div></div>
+            {% endif %}
+
+            <span class="text-sm text-gray-600">
+                Page {{ music.page }} of {{ music.total_pages }}
+            </span>
+
+            {% if music.page < music.total_pages %} <a
+                href="{{ url_for('artist.detail_artist_view', artist_id=artist.id,page=music.page+1, page_size=music.page_size) }}"
+                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                Next
+                </a>
+                {% else %}
+                <div></div>
+                {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
