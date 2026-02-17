@@ -55,6 +55,7 @@ def init_db():
         role user_role NOT NULL
     );
     """)
+    print("Created User Table")
 
     # --- Artist table ---
     cursor.execute("""
@@ -76,6 +77,7 @@ def init_db():
             ON DELETE SET NULL
     );
     """)
+    print("Created Artist Table")
 
     # --- Music table ---
     cursor.execute("""
@@ -93,6 +95,7 @@ def init_db():
             ON DELETE CASCADE
     );
     """)
+    print("Created Music Table")
 
     conn.commit()
     cursor.close()

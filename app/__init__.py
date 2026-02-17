@@ -7,6 +7,10 @@ def create_app():
 
     app.secret_key = SECRET_KEY
 
+    from app.cli import register_cli_commands
+
+    register_cli_commands(app)
+
     @app.route("/hello-world")
     def hello():
         return "Hello, World !"
