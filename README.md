@@ -24,6 +24,11 @@ uv sync
 uv run python -m app.setup_db
 ```
 
+- create super-admin: this command will create super-admin user
+```bash
+uv run flask create-super-admin
+```
+
 - to run project
 ```bash
 uv run flask --app app run --debug
@@ -58,15 +63,15 @@ app/
 │   ├── base.j2
 │   └── dashboard.j2
 └── utils/                      # include project utils for auth and Validator class
-    │   ├──
-    │   ├── decorators.py
-    │   ├── exceptions.py
-    │   └── validator.py
-    ├── __init__.py
-    ├── config.py
-    ├── db.py
-    ├── models.py
-    └── setup_db.py
+│   ├──
+│   ├── decorators.py
+│   ├── exceptions.py
+│   └── validator.py
+├── __init__.py
+├── config.py
+├── db.py
+├── models.py
+└── setup_db.py
 .env                            # copy example.env and update with own data
 .gitignore
 .python-version
