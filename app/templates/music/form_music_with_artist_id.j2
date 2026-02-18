@@ -16,10 +16,11 @@
             {{ url_for('music.create_music_for_artist_view', artist_id=artist_id)}}
         {% endif %}
         " method="POST" class="space-y-5" id="artistUpdateForm">
+        
             <input type="hidden" name="id" value="{{ (form | default({})).id | default('')}}">
+            <input type="hidden" name="next" value="{{ next | default('')}}">
             <input type="hidden" name="artist_id"
                 value="{{ form.artist_id if form is defined and form.id else artist_id | default('') }}">
-
             <div>
                 <label class="block text-sm font-medium text-gray-600">Title</label>
                 <input type="text" name="title" id="title" value="{{ (form | default({})).title | default('') }}"

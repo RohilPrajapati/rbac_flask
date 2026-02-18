@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.services.auth import validate_registration, validate_login
-from app.models import register_user, get_user_with_email
+from app.models import register_user, get_user_with_email, create_artist
 from app.utils.exceptions import ValidationError
 from werkzeug.security import check_password_hash
+from app.utils.urls import is_safe_url
 
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -12,12 +13,23 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 def register():
     if request.method == "POST":
         next_endpoint = request.form.get("next")
-        print(f"next_endpoint: {next_endpoint}")
         try:
             validate_registration(request.form)
-            register_user(request.form)
+            user_id = register_user(request.form)
+            form_data = request.form
+            role = form_data.get("role")
+            if role == "artist":
+                create_artist(
+                    {
+                        "name": f"{form_data['first_name']} {form_data['last_name']}",
+                        "dob": form_data["dob"],
+                        "gender": form_data["gender"],
+                        "address": form_data["address"],
+                        "user_id": user_id,
+                    }
+                )
 
-            if next_endpoint:
+            if next_endpoint and is_safe_url(next_endpoint):
                 try:
                     flash("User added successfully", "success")
                     return redirect(next_endpoint)
@@ -42,6 +54,7 @@ def register():
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
+    next_endpoint = request.args.get("next")
     if request.method == "POST":
         try:
             validate_login(request.form)
@@ -57,14 +70,11 @@ def login():
             session["role"] = user["role"]
 
             flash(f"Welcome, {user['first_name']}!", "success")
-
-            next_endpoint = request.args.get("next")
-            if next_endpoint:
+            if next_endpoint and is_safe_url(next_endpoint):
                 try:
-                    return redirect(url_for(next_endpoint))
+                    return redirect(next_endpoint)
                 except:
                     return redirect(url_for("dashboard"))
-
             return redirect(url_for("dashboard"))
 
         except ValidationError as e:
@@ -72,7 +82,7 @@ def login():
             return render_template("auth/login.j2", errors=e.errors, form=request.form)
     if session.get("user_id"):
         return redirect(url_for("dashboard"))
-    return render_template("auth/login.j2")
+    return render_template("auth/login.j2", next=next_endpoint)
 
 
 @bp.route("/logout", methods=("GET", "POST"))

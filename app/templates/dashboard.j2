@@ -1,9 +1,40 @@
 {% extends "base.j2" %}
+
 {% block title %} Dashboard {% endblock %}
+
 {% block body %}
-<div class="">
-    This page will have aggregations
+<div class="container mx-auto p-6">
+    {% if session.get("role") == "artist" %}
+    <div class="text-xl font-semibold text-center">Welcome to Music App</div>
+    <p class="text-center">Thank you for using app</p>
+
+    <div class="text-center my-3">
+        <a class="bg-gray-700 hover:bg-gray-500 text-white px-3 py-1 rounded"
+            href="{{ url_for('artist.get_artist_by_user', user_id=session.get('user_id')) }}">View Profile</a>
+    </div>
+    {% else %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {% if session.get('role') == "super_admin" %}
+        <div class="bg-white shadow rounded-lg p-6 flex flex-col items-center justify-center">
+            <div class="text-gray-500 text-sm">Total Users</div>
+            <div class="text-2xl font-bold">{{ data.total_users }}</div>
+        </div>
+        {% endif %}
+
+        <div class="bg-white shadow rounded-lg p-6 flex flex-col items-center justify-center">
+            <div class="text-gray-500 text-sm">Total Artists</div>
+            <div class="text-2xl font-bold">{{ data.total_artists }}</div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6 flex flex-col items-center justify-center">
+            <div class="text-gray-500 text-sm">Total Music</div>
+            <div class="text-2xl font-bold">{{ data.total_music }}</div>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
 <script>
+    // Optional: add JS interactivity if needed
 </script>
-{% endblock%}s
+{% endblock %}

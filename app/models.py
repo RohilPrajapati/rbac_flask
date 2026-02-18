@@ -5,6 +5,25 @@ from app.utils.exceptions import ValidationError
 from datetime import datetime
 
 
+def dashboard_data():
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cursor.execute("""SELECT
+        (SELECT COUNT(*) FROM users) AS total_users,
+        (SELECT COUNT(*) FROM artist) AS total_artists,
+        (SELECT COUNT(*) FROM music) AS total_music;""")
+        data = cursor.fetchone()
+        return data
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def register_user(data: dict):
     conn = get_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -31,8 +50,8 @@ def register_user(data: dict):
                 data["role"],
             ),
         )
-        user_id = cursor.fetchone()["id"]
         conn.commit()
+        user_id = cursor.fetchone()["id"]
         return user_id
     except Exception as e:
         conn.rollback()
@@ -213,8 +232,8 @@ def create_artist(data: dict):
     conn = get_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-    statement = """INSERT INTO artist (name, dob, gender, address, first_release_year, no_of_albums)
-        VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;"""
+    statement = """INSERT INTO artist (name, dob, gender, address, first_release_year, no_of_albums, user_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;"""
     try:
         cursor.execute(
             statement,
@@ -223,8 +242,9 @@ def create_artist(data: dict):
                 data["dob"],
                 data["gender"],
                 data["address"],
-                data["first_release_year"],
-                data["no_of_albums"],
+                data.get("first_release_year"),
+                data.get("no_of_albums"),
+                data.get("user_id"),
             ),
         )
         user_id = cursor.fetchone()["id"]
@@ -283,6 +303,17 @@ def get_artist_by_id(id: int):
     cursor.execute(
         "SELECT id, name, dob, gender, address, created_at, updated_at, first_release_year, no_of_albums  FROM artist WHERE id = %s",
         (id,),
+    )
+    result = cursor.fetchone()
+    return result
+
+
+def get_artist_by_user_id(user_id: int):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute(
+        "SELECT id, name, dob, gender, address, created_at, updated_at, first_release_year, no_of_albums  FROM artist WHERE user_id = %s",
+        (user_id,),
     )
     result = cursor.fetchone()
     return result

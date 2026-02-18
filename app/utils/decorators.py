@@ -7,7 +7,7 @@ def login_required(view):
     def wrapped_view(*args, **kwargs):
         if "user_id" not in session:
             flash("Please login to continue.", "error")
-            return redirect(url_for("auth.login", next=request.endpoint))
+            return redirect(url_for("auth.login", next=request.path))
         return view(*args, **kwargs)
 
     return wrapped_view
@@ -26,7 +26,7 @@ def role_required(*roles):
 
             if "user_id" not in session:
                 flash("Please login first.", "error")
-                return redirect(url_for("auth.login", next=request.endpoint))
+                return redirect(url_for("auth.login", next=request.path))
 
             user_role = session.get("role")
 

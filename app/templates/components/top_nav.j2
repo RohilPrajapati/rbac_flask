@@ -8,12 +8,18 @@
             </div>
             <div class="flex items-center space-x-6">
                 {% if session.get('user_id') %}
-                <a class="hover:text-gray-400 transition" href="{{ url_for('auth.login') }}">Dashboard</a>
+                {% if session.get("role") in ["super_admin", "artist_manager"] %}
+                <a class="hover:text-gray-400 transition" href="{{ url_for('dashboard') }}">Dashboard</a>
+                {% endif %}
                 {% if session.get("role") == "super_admin" %}
                 <a class="hover:text-gray-400 transition" href="{{ url_for('user.list_user_view') }}">User</a>
                 {% endif %}
                 {% if session.get("role") in ["super_admin", "artist_manager"] %}
                 <a class="hover:text-gray-400 transition" href="{{ url_for('artist.list_artist_view') }}">Artist</a>
+                {% endif %}
+                {% if session.get("role") in ["artist"] %}
+                <a class="hover:text-gray-400 transition"
+                    href="{{ url_for('artist.get_artist_by_user', user_id = session.get('user_id')) }}">Artist</a>
                 {% endif %}
                 <span class="text-gray-300">{{ session.get('full_name', 'User') }}</span>
                 <form action="{{ url_for('auth.logout') }}" method="POST" class="inline">
