@@ -2,12 +2,10 @@
 
 ## TODO (Remaining Works)
 
-- when artist role user is created artist record should be created
-    - allow artist to access, edit and delete music
-- design simple dashboard
 - Security and Optimization
     - setup database connection pool
     - add CSRF token to the form and verify it to protect against CSRF attacks.
+- implement test cases for auth and permission in route and crud
 
 
 ### Setup Process

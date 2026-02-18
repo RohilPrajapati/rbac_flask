@@ -17,6 +17,7 @@ from app.models import (
     delete_artist,
     fetch_list_music,
     get_all_artists,
+    get_artist_by_user_id,
 )
 from app.services.artist import validate_artist
 from app.utils.exceptions import ValidationError
@@ -175,6 +176,24 @@ def detail_artist_view(artist_id: int):
     artist = get_artist_by_id(artist_id)
     music = fetch_list_music(artist_id, page, page_size)
     if artist:
+        return render_template(
+            "artist/detail_artist.j2",
+            artist_id=artist["id"],
+            artist=artist,
+            music=music,
+        )
+    return render_template("404.j2")
+
+
+@bp.route("user/<int:user_id>", methods=("GET",))
+@role_required("artist")
+def get_artist_by_user(user_id: int):
+    page = request.args.get("page", 1, type=int)
+    page_size = request.args.get("page_size", 10, type=int)
+
+    artist = get_artist_by_user_id(user_id)
+    if artist:
+        music = fetch_list_music(artist["id"], page, page_size)
         return render_template(
             "artist/detail_artist.j2",
             artist_id=artist["id"],
