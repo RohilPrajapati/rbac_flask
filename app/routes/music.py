@@ -47,13 +47,13 @@ def update_music_view(music_id):
             validate_music(request.form)
             update_music(request.form)
 
+            flash("Music updated successfully", "success")
             next_endpoint = request.form.get("next")
             if next_endpoint and is_safe_url(next_endpoint):
                 try:
                     return redirect(next_endpoint)
                 except Exception as e:
                     print(f"error: {e}")
-            flash("Music updated successfully", "success")
             return redirect(
                 url_for("artist.detail_artist_view", artist_id=music["artist_id"])
             )
