@@ -1,5 +1,5 @@
 import click
-from app.models import register_user
+from app.models import register_user, get_user_with_email
 from app.utils.exceptions import ValidationError
 from app.services.auth import validate_registration_field
 
@@ -21,7 +21,6 @@ def register_cli_commands(app):
                     return value
 
                 except ValidationError as ve:
-                    
                     for field, msg in ve.errors.items():
                         click.echo(click.style(f"{msg}", fg="red"))
 
@@ -85,3 +84,36 @@ def register_cli_commands(app):
 
         except Exception as e:
             click.echo(click.style(f"Error: {e}", fg="red"))
+
+
+def register_default_admin(app):
+
+    @app.cli.command("create-default-admin")
+    def create_default_admin():
+        """Create a default super-admin user automatically."""
+
+        default_email = "admin@admin.com"
+
+        # Check if user already exists
+        if get_user_with_email(default_email):
+            print(f"Super-admin with email {default_email} already exists.")
+            return
+
+        data = {
+            "first_name": "Super",
+            "last_name": "Admin",
+            "email": default_email,
+            "password": "admin123",
+            "c_password": "admin123",
+            "phone": "9800000000",
+            "dob": "2000-01-01",
+            "gender": "m",
+            "address": "Nepal",
+            "role": "super_admin",
+        }
+
+        try:
+            user_id = register_user(data)
+            print(f"Super-admin created successfully! ID: {user_id}")
+        except Exception as e:
+            print(f"Error creating super-admin: {e}")

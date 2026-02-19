@@ -6,6 +6,7 @@
     - setup database connection pool
     - add CSRF token to the form and verify it to protect against CSRF attacks.
 - implement test cases for auth and permission in route and crud
+- Mobile Responsive
 
 
 ### Setup Process
@@ -31,6 +32,20 @@ uv run flask create-super-admin
 ```bash
 uv run flask --app app run --debug
 ```
+
+### Setup Run using Docker
+
+- create .docker.env file with the help of example.env
+
+- build the project
+```bash
+docker compose build --no-cache
+```
+- run the project
+```bash
+docker compose up    
+```
+
 
 ### Project Structure
 
