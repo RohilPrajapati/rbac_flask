@@ -1,12 +1,11 @@
 # Simple RBAC CRUD App using Flask with session based authentication
 
-## TODO (Remaining Works)
+## TODOs Security & Testing Enhancements (Pending)
 
-- Security and Optimization
-    - setup database connection pool
-    - add CSRF token to the form and verify it to protect against CSRF attacks.
-- implement test cases for auth and permission in route and crud
-- Mobile Responsive
+- **Security**
+    - Add CSRF token to forms and verify to protect against CSRF attacks.
+- **Testing**
+    - Implement test cases for authentication, route permissions, and CRUD operations.
 
 
 ### Setup Process
@@ -45,6 +44,12 @@ docker compose build --no-cache
 ```bash
 docker compose up    
 ```
+
+### Note: Default email and password for docker app is:
+
+email: ```admin@admin.com```
+
+password: ```admin123```
 
 
 ### Project Structure
