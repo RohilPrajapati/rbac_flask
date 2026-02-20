@@ -1,9 +1,31 @@
 import psycopg2
 from app.config import DB_CONFIG
+from psycopg2 import pool
+from contextlib import contextmanager
+
+DATABASE_URL = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['dbname']}"
+
+connection_pool = pool.ThreadedConnectionPool(minconn=1, maxconn=10, dsn=DATABASE_URL)
 
 
+@contextmanager
 def get_connection():
-    return psycopg2.connect(**DB_CONFIG)
+    """
+    Get connection from pool.
+    Does NOT commit automatically.
+    Caller is responsible for commit/rollback.
+    """
+    conn = None
+    try:
+        conn = connection_pool.getconn()
+        yield conn
+    finally:
+        if conn:
+            connection_pool.putconn(conn)
+
+
+# def get_connection():
+#     return psycopg2.connect(**DB_CONFIG)
 
 
 def init_db():
