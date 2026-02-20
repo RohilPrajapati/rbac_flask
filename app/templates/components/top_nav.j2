@@ -1,12 +1,13 @@
 <nav class="bg-gray-900 text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
-            <div class="text-xl font-semibold tracking-wide">
+            <div class="flex-shrink-0 text-xl font-semibold tracking-wide">
                 <a href="{{ url_for('auth.login') }}" class="hover:text-gray-400 transition">
                     Music Admin Panel
                 </a>
             </div>
-            <div class="flex items-center space-x-6">
+
+            <div class="hidden md:flex items-center space-x-6">
                 {% if session.get('user_id') %}
                 {% if session.get("role") in ["super_admin", "artist_manager"] %}
                 <a class="hover:text-gray-400 transition" href="{{ url_for('dashboard') }}">Dashboard</a>
@@ -17,7 +18,7 @@
                 {% if session.get("role") in ["super_admin", "artist_manager"] %}
                 <a class="hover:text-gray-400 transition" href="{{ url_for('artist.list_artist_view') }}">Artist</a>
                 {% endif %}
-                {% if session.get("role") in ["artist"] %}
+                {% if session.get("role") == "artist" %}
                 <a class="hover:text-gray-400 transition"
                     href="{{ url_for('artist.get_artist_by_user', user_id = session.get('user_id')) }}">Artist</a>
                 {% endif %}
@@ -30,7 +31,55 @@
                 <a class="hover:text-gray-400 transition" href="{{ url_for('auth.register') }}">Register</a>
                 {% endif %}
             </div>
+
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 px-2 pt-2 pb-3 space-y-1">
+        {% if session.get('user_id') %}
+        {% if session.get("role") in ["super_admin", "artist_manager"] %}
+        <a class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700"
+            href="{{ url_for('dashboard') }}">Dashboard</a>
+        {% endif %}
+        {% if session.get("role") == "super_admin" %}
+        <a class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700"
+            href="{{ url_for('user.list_user_view') }}">User</a>
+        {% endif %}
+        {% if session.get("role") in ["super_admin", "artist_manager"] %}
+        <a class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700"
+            href="{{ url_for('artist.list_artist_view') }}">Artist</a>
+        {% endif %}
+        {% if session.get("role") == "artist" %}
+        <a class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700"
+            href="{{ url_for('artist.get_artist_by_user', user_id = session.get('user_id')) }}">Artist</a>
+        {% endif %}
+        <span class="block px-3 py-2 text-gray-300">{{ session.get('full_name', 'User') }}</span>
+        <form action="{{ url_for('auth.logout') }}" method="POST">
+            <button type="submit" class="block w-full text-left px-3 py-2 rounded-md hover:bg-gray-700">Logout</button>
+        </form>
+        {% else %}
+        <a class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700"
+            href="{{ url_for('auth.login') }}">Login</a>
+        <a class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700"
+            href="{{ url_for('auth.register') }}">Register</a>
+        {% endif %}
     </div>
 </nav>
+
+<script>
+    const btn = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>
