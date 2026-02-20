@@ -85,22 +85,21 @@
 </div>
 <div class="flex items-center justify-center py-10">
     <div class="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-3 sm:space-y-0">
             <h2 class="text-2xl font-bold text-gray-800">
                 Music
             </h2>
-            <div>
-                <span class="text-sm text-gray-500 px-5">
-                    Showing {{ music.musics|length }} of {{ music.total }} artists
-                </span>
-                <span>
-                    <a href="{{ url_for('music.create_music_for_artist_view', artist_id=artist.id, next=request.path) }}"
-                        class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-900 text-white rounded-lg transition">
-                        Add Music
-                    </a>
-                </span>
-            </div>
 
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="text-sm text-gray-500">
+                    Showing {{ music.musics|length }} of {{ music.total }} music
+                </span>
+
+                <a href="{{ url_for('music.create_music_for_artist_view', artist_id=artist.id, next=request.path) }}"
+                    class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-900 text-white rounded-lg transition inline-flex items-center justify-center">
+                    Add Music
+                </a>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-200 rounded-sm overflow-hidden">
