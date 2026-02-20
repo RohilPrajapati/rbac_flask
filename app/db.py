@@ -74,7 +74,7 @@ def init_db():
         CONSTRAINT fk_artist_user
             FOREIGN KEY (user_id)
             REFERENCES users(id)
-            ON DELETE SET NULL
+            ON DELETE CASCADE
     );
     """)
     print("Created Artist Table")

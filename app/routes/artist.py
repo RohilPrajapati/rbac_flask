@@ -6,6 +6,7 @@ from flask import (
     redirect,
     url_for,
     send_file,
+    session,
 )
 from app.utils.decorators import role_required
 from app.models import (
@@ -14,10 +15,11 @@ from app.models import (
     create_artists_bulk,
     get_artist_by_id,
     update_artist,
-    delete_artist,
     fetch_list_music,
     get_all_artists,
     get_artist_by_user_id,
+    delete_artist,
+    delete_user,
 )
 from app.services.artist import validate_artist
 from app.utils.exceptions import ValidationError
@@ -232,11 +234,23 @@ def update_artist_view(artist_id):
 @bp.route("/<int:artist_id>/delete", methods=("POST",))
 @role_required("super_admin", "artist_manager")
 def delete_artist_view(artist_id):
-    if request.method == "POST":
-        try:
-            delete_artist(artist_id)
-            flash("Artist deleted successfully", "success")
-        except ValueError as e:
-            flash(str(e), "error")
+    try:
+        artist = get_artist_by_id(artist_id)
 
-    return redirect(url_for("user.list_artist_view"))
+        if not artist:
+            flash("Artist not found.", "error")
+            return redirect(url_for("artist.list_artist_view"))
+        if (
+            session.get("role") == "artist_manager"
+            and artist.get("user_id") is not None
+        ):
+            flash("You cannot delete an artist who has a user account.", "error")
+            return redirect(url_for("artist.list_artist_view"))
+        delete_artist(artist_id)
+        delete_user(artist.get("user_id"))
+        flash("Artist deleted successfully.", "success")
+
+    except ValueError as e:
+        flash(str(e), "error")
+
+    return redirect(url_for("artist.list_artist_view"))
