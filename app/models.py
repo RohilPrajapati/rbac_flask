@@ -301,7 +301,7 @@ def get_artist_by_id(id: int):
     conn = get_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     cursor.execute(
-        "SELECT id, name, dob, gender, address, created_at, updated_at, first_release_year, no_of_albums  FROM artist WHERE id = %s",
+        "SELECT id, name, dob, gender, address, created_at, updated_at, first_release_year, no_of_albums, user_id  FROM artist WHERE id = %s",
         (id,),
     )
     result = cursor.fetchone()
