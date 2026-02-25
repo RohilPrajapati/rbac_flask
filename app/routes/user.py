@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from app.models import fetch_list_users, delete_user, get_user_by_id, update_user
 from app.utils.decorators import role_required
 from app.services.auth import validate_user_update
@@ -63,6 +63,9 @@ def update_user_view(user_id):
 @role_required("super_admin")
 def delete_user_view(user_id):
     if request.method == "POST":
+        if user_id == session.get("user_id"):
+            flash("Same session user can't delete user", "error")
+            return redirect(url_for("user.list_user_view"))
         try:
             delete_user(user_id)
             flash("User deleted successfully", "success")
